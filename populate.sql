@@ -1,132 +1,147 @@
--- criação do banco de dados
-create database if not exists ecommerce;
+-- Inserindo registros ao modelo E-Commerce criado e realizando queries de verificações e especificações
 use ecommerce;
 
-drop tables Cliente, Produto, Pedido, Pagamento, Estoque, Fornecedor, Vendedor, PVendedor, PPedido, ProdutoEmEstoque;
+-- Inserindo registros para a tabela Cliente:
+INSERT INTO Cliente VALUES 
+    (1, 'João', 'S.', 'Silva', '12345678901', 'Rua A, 123', '1990-05-15'),
+    (2, 'Maria', 'F.', 'Souza', '98765432101', 'Avenida B, 456', '1988-11-22'),
+    (3, 'Pedro', 'L.', 'Pereira', '45678912301', 'Praça C, 789', '1995-07-10'),
+    (4, 'Ana', 'M.', 'Monteiro', '32165498701', 'Estrada D, 1010', '1985-09-30'),
+    (5, 'Carlos', 'R.', 'Ribeiro', '78945612301', 'Alameda E, 555', '2000-02-05');
 
--- Populando tabela cliente
-create table if not exists Cliente(
-		idCliente int auto_increment,
-		Primeiro_Nome varchar(90) not null, 
-		Inicial_do_Nome_do_Meio varchar(5) not null,
-		Sobrenome varchar(90) not null,
-		CPF varchar(11),
-		Endereço varchar(90) not null,
-		Data_de_Nascimento date not null,
-		primary key (idCliente),
-		constraint unique_CPF unique (CPF)
-		);
-desc Cliente;
+-- Inserindo registros para a tabela Estoque:
+INSERT INTO Estoque VALUES 
+    (1, 'Depósito A', 100),
+    (2, 'Depósito B', 50),
+    (3, 'Depósito C', 200),
+    (4, 'Depósito D', 75),
+    (5, 'Depósito E', 120);
 
--- Populando tabela Estoque:
-create table if not exists Estoque(
-		idEstoque int auto_increment,
-		LocaldoEstoque varchar(300) not null,
-		Quantidade int not null,
-        primary key (idEstoque)
-		);
-desc Estoque;
+-- Inserindo registros para a tabela Produto:
+INSERT INTO Produto VALUES
+    (1, 'Celular', 1, NULL, 'Eletrônico', 1500.00, 'Smartphone com câmera de alta resolução', 4, 'Disponível', '15 x 7 cm'),
+    (2, 'Camiseta', 0, NULL, 'Roupas', 50.00, 'Camiseta de algodão unissex', 5, 'Indisponível', 'P'),
+    (3, 'Bola de Futebol', 1, NULL, 'Brinquedos', 40.00, 'Bola de futebol tamanho oficial', 4, 'Disponível', 'Oficial'),
+    (4, 'Arroz', 0, NULL, 'Alimentos', 20.00, 'Pacote de arroz de 1kg', 5, 'Indisponível', '1 kg'),
+    (5, 'Sofá', 0, NULL, 'Móveis', 1200.00, 'Sofá de 3 lugares com tecido estofado', 4, 'Disponível', '210 x 90 cm');
 
--- Populando tabela Produto:
-create table if not exists Produto(
-		idProduto int not null,
-        Nome_do_Produto varchar(45) not null,
-        Classificação_para_crianças bool,
-        CPF_Produto varchar(11),
-		Categoria enum('Eletrônico', 'Roupas', 'Brinquedos', 'Alimentos', 'Móveis'),
-		Valor float not null,
-        Descrição mediumtext,
-        Avaliação int default null,
-        Disponibilidade enum('Disponivel', 'Indisponivel') default ('Disponível'),
-        tamanho_do_produto varchar(20), -- dimensão do produto
-        constraint fk_Produto_CPF foreign key(CPF_Produto) references Cliente(CPF),
-		primary key (idProduto)
-		);
-desc Produto;
+-- Inserindo registros para a tabela Pagamento:
+INSERT INTO Pagamento VALUES
+    (1, 1001, 'Cartão', 500.00),
+    (2, 1002, 'Boleto', 200.00),
+    (3, 1003, 'Dois cartões', 1000.00),
+    (4, 1004, 'Cartão', 300.00),
+    (5, 1005, 'Boleto', 150.00);
 
--- Populando tabela Pagamento:
-create table if not exists Pagamento(
-		idClientePagamento int,
-		idPagamento int not null,
-        TipodePagamento enum('Boleto','Cartão', 'Dois cartões'),
-        LimiteDisponível float,
-        constraint fk_Pagamento_idCliente foreign key (idClientePagamento) references Cliente(idCliente),
-        primary key(idClientePagamento, idPagamento)
-		);
-desc Pagamento;
+-- Inserindo registros para a tabela Pedido:
+INSERT INTO Pedido VALUES
+    (1001, 1, 'Confirmado', 'Pedido de roupas', 25.999, 1),
+    (1002, 2, 'Em Processamento', 'Pedido de eletrônicos', 15.005, 0),
+    (1003, 3, 'Cancelado', 'Pedido de brinquedos', 20.00, 1),
+    (1004, 4, 'Confirmado', 'Pedido de alimentos', 30.00, 1),
+    (1005, 5, 'Em Processamento', 'Pedido de móveis', 50.00, 0);
 
--- Populando tabela Pedido:
-create table if not exists Pedido(
-		idPedido int auto_increment,
-        idClientePedido int,
-        StatusdoPedido enum('Cancelado', 'Confirmado', 'Em Processamento') default ('Em Processamento'),
-        DescriçãoPedido mediumtext,
-        Frete float default (10) not null,
-        Pagamento bool default false,
-        constraint fk_Pedido_idCliente foreign key (idClientePedido) references Cliente(idCliente),
-        primary key (idPedido, idClientePedido)
-        );
-desc Pedido;
+-- Inserindo registros para a tabela Fornecedor:
+INSERT INTO Fornecedor VALUES
+    (1, 'Fornecedor A', '12345678901234', 'Contato A'),
+    (2, 'Fornecedor B', '98765432109876', 'Contato B'),
+    (3, 'Fornecedor C', '54321678905678', 'Contato C'),
+    (4, 'Fornecedor D', '87654321098765', 'Contato D'),
+    (5, 'Fornecedor E', '56789043215678', 'Contato E');
 
--- Populando tabela Fornecedor:
-create table if not exists Fornecedor(
-		idFornecedor int auto_increment,
-		RazãoSocialFornecedor varchar(100) not null,
-        CNPJ varchar(15) not null,
-        Contato varchar(20) not null,
-        constraint unique_Fornecedor unique(CNPJ, Contato),
-        primary key (idFornecedor)
-		);
-desc Fornecedor;        
-        
--- Populando tabela Vendedor:
-create table if not exists Vendedor(
-		idVendedor int auto_increment,
-        RazãoSocialVendedor varchar(100) not null,
-        CNPJVendedor varchar(15) not null,
-        CPFVendedor varchar(11) not null,
-        NomeFantasia varchar(200),
-        EndereçoVendedor varchar(200) not null,
-        constraint unique_vendedor unique(CNPJVendedor, CPFVendedor),
-        constraint fk_Vendedor_CNPJ foreign key (CNPJVendedor) references Fornecedor(CNPJ),
-        constraint fk_Vendedor_CPF foreign key (CPFVendedor) references Cliente(CPF),
-        primary key(idVendedor)
-		);
-desc Vendedor;
+-- Inserindo registros para a tabela Vendedor:
+INSERT INTO Vendedor VALUES
+    (1,'Empresa A', '12345678901234', '12345678901', 'Vendedor A', 'Endereço 1'),
+    (2,'Empresa B', '98765432109876', '98765432101', 'Vendedor B', 'Endereço 2'),
+    (3,'Empresa C', '54321678905678', '45678912301', 'Vendedor C', 'Endereço 3'),
+    (4,'Empresa D', '87654321098765', '32165498701', 'Vendedor D', 'Endereço 4'),
+    (5,'Empresa E', '56789043215678', '78945612301', 'Vendedor E', 'Endereço 5');
 
--- Populando tabela Produto do Vendedor:
-create table if not exists PVendedor( -- PVendedor == 'Produto do Vendedor'
-		idPVendedor int,
-        idPProduto int, -- IF utilizado para diferenciar do ID Produto da tabela de produto
-        QuantidadeProduto int default (1),
-		primary key (idPVendedor, idPProduto),
-        constraint fk_Produto_Vendedor foreign key (idPVendedor) references Vendedor(idVendedor),
-        constraint fk_Produto_Produto foreign key (idPProduto) references Produto(idProduto)
-        );
-desc PVendedor;
+-- Inserindo registros para a tabela PVendedor:
+INSERT INTO PVendedor VALUES
+    (1, 1, 5),
+    (1, 2, 3),
+    (2, 3, 2),
+    (3, 1, 4),
+    (4, 4, 6);
 
--- Populando tabela Produto do Pedido:
-create table if not exists PPedido(
-		idPPedido int, -- ID Produto Pedido
-        idPProduto int, -- ID Produto do Produto
-        QuantidadePedido int default (1),
-        ProdutoStatusPedido enum('Disponível', 'Indisponível') default ('Disponível'),
-        primary key (idPPedido, idPProduto),
-        constraint fk_Produto_Pedido foreign key (idPPedido) references Pedido(idPedido),
-        constraint fk_Produto_PPedido foreign key (idPProduto) references produto(idProduto)
-        );
-desc PPedido;
+-- Inserindo registros para a tabela PPedido:
+INSERT INTO PPedido VALUES
+    (1001, 1, 2, 'Disponível'),
+    (1001, 2, 1, NULL),
+    (1002, 3, 3, 'Disponível'),
+    (1003, 2, 2, 'Indisponível'),
+    (1004, 4, 1, 'Indisponível');
 
--- Populando tabela Produto em Estoque:
-create table if not exists ProdutoEmEstoque(
-		idProdutoEmEstoque int,
-        idPProdutoEstoque int, -- ID PRODUTO DO PRODUTO NO ESTOQUE
-        QuantidadeEmEstoque int,
-        Localização varchar(255),
-        primary key (idProdutoEmEstoque, idPProdutoEstoque),
-        constraint fk_idProdutoEmEstoque foreign key (idProdutoEmEstoque) references Estoque(idEstoque),
-        constraint fk_idPProdutoEstoque foreign key (idPProdutoEstoque) references Produto(idProduto)
-        );
-desc ProdutoEmEstoque;
+-- Inserindo registros para a tabela ProdutoEmEstoque:
+INSERT INTO ProdutoEmEstoque VALUES
+    (1, 1, 10, 'Prateleira A'),
+    (2, 2, 5, 'Prateleira B'),
+    (3, 3, 20, 'Prateleira C'),
+    (4, 4, 15, 'Prateleira D'),
+    (5, 5, 8, 'Prateleira E');
 
-show tables;
+-- Quantidade de produtos do vendedor:
+SELECT * FROM PVendedor;
+
+-- Quantidade de cientes:
+SELECT COUNT(*) FROM Cliente;
+
+-- mostrando uma mesclagem das tabelas Clientes e Pedidos concatenando o nome e truncando valores:
+SELECT concat(Primeiro_Nome, ' ', Inicial_do_Nome_do_Meio, ' ', Sobrenome) AS Nome_Completo, 
+	idCliente, 
+    CPF, 
+    Endereço, 
+    Data_de_Nascimento, 
+    idPedido, 
+    idClientePedido, 
+    StatusdoPedido, 
+    DescriçãoPedido,
+    round(Frete, 2) AS Frete, 
+    Pagamento 
+FROM Cliente c, Pedido p 
+WHERE c.idCliente = p.idClientePedido;
+
+-- mostrando todas as colunas das tabelas Clientes e Pedidos:
+SELECT * FROM Cliente c, Pedido p WHERE c.idCliente = idClientePedido;
+ 
+-- mostrando informações dos produtos e das compras:
+SELECT DISTINCT
+	Nome_do_Produto, 
+    Categoria, 
+    Valor, 
+    Descrição, 
+    Disponibilidade, 
+    TipodePagamento,
+    StatusdoPedido,
+    DescriçãoPedido,
+    round(Frete,2) AS Frete,
+    Pagamento
+FROM Produto p
+JOIN PPedido pp ON p.idProduto = pp.idPProduto
+JOIN Pedido pe ON pp.idPPedido = pe.idPedido
+JOIN Pagamento pg ON pe.idClientePedido = pg.idClientePagamento;
+
+-- Produtos e compras ordenados pelo frete:
+SELECT DISTINCT 
+    Nome_do_Produto, 
+    p.categoria, 
+    p.valor, 
+    p.descrição, 
+    p.disponibilidade, 
+    pg.tipodepagamento as Tipo_de_Pagamento,
+    pe.statusdopedido as Status_do_Pedido,
+    pe.descriçãopedido as Descrição_do_Pedido,
+    round(pe.frete, 2) Frete,
+    pe.pagamento
+FROM produto p
+INNER JOIN ppedido pp on p.idproduto = pp.idpproduto
+INNER JOIN pedido pe on pp.idppedido = pe.idpedido
+INNER JOIN pagamento pg on pe.idclientepedido = pg.idclientepagamento
+ORDER BY Frete;
+
+-- Pedidos por cliente:
+SELECT c.idCliente, c.Primeiro_Nome, COUNT(*) 
+FROM Cliente c 
+INNER JOIN Pedido p ON p.idClientePedido = c.idCliente
+GROUP BY c.idCliente;
